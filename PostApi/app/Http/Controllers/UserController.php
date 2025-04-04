@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Http;
 
 class UserController extends Controller
 {
-    // Show the login form
+    // Show the Register form
 
     public function showRegisterForm()
     {
@@ -50,6 +50,8 @@ class UserController extends Controller
         return redirect()->back()->with('error', 'Registration failed');
     }
 
+
+    // Show the login form
     public function showLoginForm()
     {
         return view('login');
@@ -63,7 +65,7 @@ class UserController extends Controller
             'password' => 'required|string',
         ]);
 
-        $response = Http::post('https://dummyjson.com/auth/login', [
+        $response = Http::post('https://dummyjson.com/auth/login', [     //login api request
             'username' => $request->username,
             'password' => $request->password,
         ]);
@@ -124,7 +126,7 @@ class UserController extends Controller
             }
         }
 
-        $response = Http::put("https://dummyjson.com/users/{$userID}", [
+        $response = Http::put("https://dummyjson.com/users/{$userID}", [   //user data update api
             'username' => $request->username,
             'email' => $request->email,
             'firstName' => $request->firstName,
@@ -214,6 +216,8 @@ class UserController extends Controller
         return redirect()->route('login')->with('message', 'Logged out successfully');
     }
 
+
+    // Show user posts
     public function viewPosts($userId)
     {
         $userResponse = Http::get("https://dummyjson.com/users/{$userId}");
@@ -239,6 +243,7 @@ class UserController extends Controller
         ]);
     }
 
+    // delete post
     public function deletePost($postId)
     {
         $response = Http::delete("https://dummyjson.com/posts/{$postId}");
@@ -247,7 +252,7 @@ class UserController extends Controller
         if ($response->successful()) {
             $deletedUPost = $response->json();
             // dd($deletedUser);
-            if (isset($deletedUPost['isDeleted']) && $deletedUPost['isDeleted'] === true) {
+            if (isset($deletedUPost['isDeleted']) && $deletedUPost['isDeleted'] === true) {   // for checking if post is deleted
                 return redirect()
                     ->back()
                     ->with('message', 'Post deleted successfully');
@@ -257,6 +262,8 @@ class UserController extends Controller
         return redirect()->back()->with('error', 'Failed to delete post');
     }
 
+
+    // delete user
     public function deleteUser($userId)
     {
         // dd($userId);
@@ -266,7 +273,7 @@ class UserController extends Controller
         if ($response->successful()) {
             $deletedUser = $response->json();
             // dd($deletedUser);
-            if (isset($deletedUser['isDeleted']) && $deletedUser['isDeleted'] === true) {
+            if (isset($deletedUser['isDeleted']) && $deletedUser['isDeleted'] === true) {  // for checking if user is deleted
                 return redirect()
                     ->back()
                     ->with('message', 'User deleted successfully');
@@ -304,7 +311,7 @@ class UserController extends Controller
             'userId' => 'required|integer',
         ]);
 
-        $response = Http::post('https://dummyjson.com/posts/add', [
+        $response = Http::post('https://dummyjson.com/posts/add', [    // post create api
             'title' => $request->title,
             'body' => $request->body,
             'userId' => $request->userId,
